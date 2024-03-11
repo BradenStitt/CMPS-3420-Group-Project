@@ -1,0 +1,12 @@
+{
+    "client": {
+        "username": "",
+        "spotifyUserID": "",
+        "auth_code": "",
+        "devices": []
+    },
+    "tokens": {
+        "access_token": "",
+        "refresh_token": ""
+    }
+}
