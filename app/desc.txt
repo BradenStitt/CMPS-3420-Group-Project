@@ -1,2 +1,0 @@
-This folder will be for most of the backend code
-Such as python functions that call APIs and such

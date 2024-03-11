@@ -28,14 +28,14 @@ CREATE TABLE Venue (
 );
 
 -- Customer(CID, Username, Address, Date of Birth, Created at, Password)
-CREATE TABLE Customer {
+CREATE TABLE Customer (
     ID int unsigned NOT NULL PRIMARY KEY,
     Customer_Username varchar(50),
     Customer_Password varchar(256) NOT NULL,
     Customer_Address varchar(256),
     Customer_DOB date,
     Created_At varchar(10)
-};
+);
 
 -- Artist(AName)
 CREATE TABLE Artist (
