@@ -39,7 +39,7 @@ CREATE TABLE Customer (
 
 -- Artist(AName)
 CREATE TABLE Artist (
-    Enum int NOT NULL AUTO_INCREMENT, 
+    Enum int NOT NULL, 
     AName varchar(50) NOT NULL PRIMARY KEY
 );
 
@@ -67,7 +67,7 @@ CREATE TABLE Attends (
     Venue_ID int unsigned NOT NULL,
     Event_ID int unsigned NOT NULL,
     Customer_ID int unsigned NOT NULL,
-    PRIMARY KEY (Venue_ID, Event_ID, Customer_ID)
+    PRIMARY KEY (Venue_ID, Event_ID, Customer_ID),
     FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
@@ -145,7 +145,7 @@ CREATE TABLE Artist_Genre (
 -- Customer_PhoneNumber(CID, Phone_Number)
 -- FK CID refers to Customer(ID)
 CREATE TABLE Customer_PhoneNumber (
-    Customer_ID int unsigned NOT NULL
+    Customer_ID int unsigned NOT NULL,
     Phone_Number varchar(25),
     PRIMARY KEY (Customer_ID, Phone_Number),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
