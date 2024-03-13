@@ -68,7 +68,7 @@ CREATE TABLE Attends (
     Event_ID int unsigned NOT NULL,
     Customer_ID int unsigned NOT NULL,
     PRIMARY KEY (Venue_ID, Event_ID, Customer_ID),
-    FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
 );
@@ -82,7 +82,7 @@ CREATE TABLE Performed (
     Event_ID int unsigned NOT NULL,
     Artist_Name varchar(50) NOT NULL,
     PRIMARY KEY (Venue_ID, Event_ID, Artist_Name),
-    FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID),
     FOREIGN KEY (Artist_Name) REFERENCES Artist(AName)
 );
@@ -117,7 +117,7 @@ CREATE TABLE Event_Image (
     --          You CAN store images as raw data, but a link might be easier
     E_Image varchar(128),
     PRIMARY KEY (Venue_ID, Event_ID, E_Image),
-    FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID)
 );
 
@@ -129,7 +129,7 @@ CREATE TABLE Event_Price (
     Event_ID int unsigned NOT NULL,
     Price float,
     PRIMARY KEY (Venue_ID, Event_ID, Price),
-    FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID)
 );
 
