@@ -39,7 +39,7 @@ CREATE TABLE Customer (
 
 -- Artist(AName)
 CREATE TABLE Artist (
-    Enum int NOT NULL AUTO_INCREMENT, 
+    Enum int NOT NULL, 
     AName varchar(50) NOT NULL PRIMARY KEY
 );
 
@@ -47,34 +47,34 @@ CREATE TABLE Artist (
 -- Event(VID, EID, EName, Description, Time, Type, Date)
 -- FK VID refers to Venue(ID) (NOT NULL)
 CREATE TABLE Occasion (
-    Venue_ID int unsigned NOT NULL,
     ID int unsigned NOT NULL,
+    Venue_ID int unsigned NOT NULL,
     Event_Name varchar(50),
     Event_Description varchar(256),
     -- Jose:    If we want to add a constraint to make sure the user is 18+,
     --          We can add that on the server side or by adding 'CHECK' here
     Event_Date_and_Time timestamp,
     Event_Type varchar(50),
-    PRIMARY KEY (Venue_ID, ID),
+    PRIMARY KEY (ID, Venue_ID),
     FOREIGN KEY (Venue_ID) REFERENCES Venue(ID) 
 );
 
 -- Attends(VID, EID, CID)
--- FK VID refers to Venue(ID) (NOT NULL)
+-- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
 -- FK CID refers to Customer(ID) (NOT NULL)
 CREATE TABLE Attends (
     Venue_ID int unsigned NOT NULL,
     Event_ID int unsigned NOT NULL,
     Customer_ID int unsigned NOT NULL,
-    PRIMARY KEY (Venue_ID, Event_ID, Customer_ID)
-    FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
+    PRIMARY KEY (Venue_ID, Event_ID, Customer_ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
 );
 
 -- Performed(VID, EID, AName)
--- FK VID refers to Venue(ID) (NOT NULL)
+-- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
 -- FK AName refers to Artist(AName) (NOT NULL)
 CREATE TABLE Performed (
@@ -82,7 +82,7 @@ CREATE TABLE Performed (
     Event_ID int unsigned NOT NULL,
     Artist_Name varchar(50) NOT NULL,
     PRIMARY KEY (Venue_ID, Event_ID, Artist_Name),
-    FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID),
     FOREIGN KEY (Artist_Name) REFERENCES Artist(AName)
 );
@@ -108,7 +108,7 @@ CREATE TABLE Venue_PhoneNumber (
 );
 
 -- Event_Image(VID, EID, Image)
--- FK VID refers to Venue(ID) (NOT NULL)
+-- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
 CREATE TABLE Event_Image (
     Venue_ID int unsigned NOT NULL,
@@ -117,19 +117,19 @@ CREATE TABLE Event_Image (
     --          You CAN store images as raw data, but a link might be easier
     E_Image varchar(128),
     PRIMARY KEY (Venue_ID, Event_ID, E_Image),
-    FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID)
 );
 
 -- Event_Price(VID, EID, Price)
--- FK VID refers to Venue(ID) (NOT NULL)
+-- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
 CREATE TABLE Event_Price (
     Venue_ID int unsigned NOT NULL,
     Event_ID int unsigned NOT NULL,
     Price float,
     PRIMARY KEY (Venue_ID, Event_ID, Price),
-    FOREIGN KEY (Venue_ID) REFERENCES Venue(ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
     FOREIGN KEY (Event_ID) REFERENCES Occasion(ID)
 );
 
@@ -145,7 +145,7 @@ CREATE TABLE Artist_Genre (
 -- Customer_PhoneNumber(CID, Phone_Number)
 -- FK CID refers to Customer(ID)
 CREATE TABLE Customer_PhoneNumber (
-    Customer_ID int unsigned NOT NULL
+    Customer_ID int unsigned NOT NULL,
     Phone_Number varchar(25),
     PRIMARY KEY (Customer_ID, Phone_Number),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
