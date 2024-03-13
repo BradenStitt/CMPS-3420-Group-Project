@@ -47,20 +47,20 @@ CREATE TABLE Artist (
 -- Event(VID, EID, EName, Description, Time, Type, Date)
 -- FK VID refers to Venue(ID) (NOT NULL)
 CREATE TABLE Occasion (
-    Venue_ID int unsigned NOT NULL,
     ID int unsigned NOT NULL,
+    Venue_ID int unsigned NOT NULL,
     Event_Name varchar(50),
     Event_Description varchar(256),
     -- Jose:    If we want to add a constraint to make sure the user is 18+,
     --          We can add that on the server side or by adding 'CHECK' here
     Event_Date_and_Time timestamp,
     Event_Type varchar(50),
-    PRIMARY KEY (Venue_ID, ID),
+    PRIMARY KEY (ID, Venue_ID),
     FOREIGN KEY (Venue_ID) REFERENCES Venue(ID) 
 );
 
 -- Attends(VID, EID, CID)
--- FK VID refers to Venue(ID) (NOT NULL)
+-- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
 -- FK CID refers to Customer(ID) (NOT NULL)
 CREATE TABLE Attends (
@@ -74,7 +74,7 @@ CREATE TABLE Attends (
 );
 
 -- Performed(VID, EID, AName)
--- FK VID refers to Venue(ID) (NOT NULL)
+-- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
 -- FK AName refers to Artist(AName) (NOT NULL)
 CREATE TABLE Performed (
@@ -108,7 +108,7 @@ CREATE TABLE Venue_PhoneNumber (
 );
 
 -- Event_Image(VID, EID, Image)
--- FK VID refers to Venue(ID) (NOT NULL)
+-- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
 CREATE TABLE Event_Image (
     Venue_ID int unsigned NOT NULL,
@@ -122,7 +122,7 @@ CREATE TABLE Event_Image (
 );
 
 -- Event_Price(VID, EID, Price)
--- FK VID refers to Venue(ID) (NOT NULL)
+-- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
 CREATE TABLE Event_Price (
     Venue_ID int unsigned NOT NULL,
