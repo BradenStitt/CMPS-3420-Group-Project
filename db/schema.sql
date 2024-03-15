@@ -21,25 +21,24 @@ DROP TABLE IF EXISTS Customer_PhoneNumber;
 
 -- Venue(VID, VAddress, VName, Capacity)
 CREATE TABLE Venue (
-    ID int unsigned NOT NULL PRIMARY KEY,
+    ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
     Venue_Name varchar(50),
-    Venue_Address varchar(256),
+    Venue_Address varchar(255),
     Capacity int unsigned
 );
 
 -- Customer(CID, Username, Address, Date of Birth, Created at, Password)
 CREATE TABLE Customer (
-    ID int unsigned NOT NULL PRIMARY KEY,
-    Customer_Username varchar(50),
-    Customer_Password varchar(256) NOT NULL,
-    Customer_Address varchar(256),
+    ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Customer_Username varchar(50) NOT NULL,
+    Customer_Password varchar(255) NOT NULL,
+    Customer_Address varchar(255),
     Customer_DOB date,
-    Created_At varchar(10)
+    Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- e.g. 2021-04-20 12:00:00
 );
 
 -- Artist(AName)
 CREATE TABLE Artist (
-    Enum int NOT NULL, 
     AName varchar(50) NOT NULL PRIMARY KEY
 );
 
@@ -47,13 +46,13 @@ CREATE TABLE Artist (
 -- Event(VID, EID, EName, Description, Time, Type, Date)
 -- FK VID refers to Venue(ID) (NOT NULL)
 CREATE TABLE Occasion (
-    ID int unsigned NOT NULL,
+    ID int unsigned NOT NULL AUTO_INCREMENT,
     Venue_ID int unsigned NOT NULL,
     Event_Name varchar(50),
-    Event_Description varchar(256),
+    Event_Description TEXT, -- text field can store up to 65,535 characters
     -- Jose:    If we want to add a constraint to make sure the user is 18+,
     --          We can add that on the server side or by adding 'CHECK' here
-    Event_Date_and_Time timestamp,
+    Event_Date_and_Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Event_Type varchar(50),
     PRIMARY KEY (ID, Venue_ID),
     FOREIGN KEY (Venue_ID) REFERENCES Venue(ID) 
@@ -68,8 +67,7 @@ CREATE TABLE Attends (
     Event_ID int unsigned NOT NULL,
     Customer_ID int unsigned NOT NULL,
     PRIMARY KEY (Venue_ID, Event_ID, Customer_ID),
-    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
-    FOREIGN KEY (Event_ID) REFERENCES Occasion(ID),
+    FOREIGN KEY (Venue_ID, Event_ID) REFERENCES Occasion(ID, Venue_ID),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
 );
 
@@ -82,8 +80,7 @@ CREATE TABLE Performed (
     Event_ID int unsigned NOT NULL,
     Artist_Name varchar(50) NOT NULL,
     PRIMARY KEY (Venue_ID, Event_ID, Artist_Name),
-    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
-    FOREIGN KEY (Event_ID) REFERENCES Occasion(ID),
+    FOREIGN KEY (Venue_ID, Event_ID) REFERENCES Occasion(ID, Venue_ID),
     FOREIGN KEY (Artist_Name) REFERENCES Artist(AName)
 );
 
@@ -117,8 +114,7 @@ CREATE TABLE Event_Image (
     --          You CAN store images as raw data, but a link might be easier
     E_Image varchar(128),
     PRIMARY KEY (Venue_ID, Event_ID, E_Image),
-    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
-    FOREIGN KEY (Event_ID) REFERENCES Occasion(ID)
+    FOREIGN KEY (Venue_ID, Event_ID) REFERENCES Occasion(ID, Venue_ID)
 );
 
 -- Event_Price(VID, EID, Price)
@@ -127,10 +123,9 @@ CREATE TABLE Event_Image (
 CREATE TABLE Event_Price (
     Venue_ID int unsigned NOT NULL,
     Event_ID int unsigned NOT NULL,
-    Price float,
-    PRIMARY KEY (Venue_ID, Event_ID, Price),
-    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
-    FOREIGN KEY (Event_ID) REFERENCES Occasion(ID)
+    Price DECIMAL(10, 2) DEFAULT 0.00,
+    PRIMARY KEY (Venue_ID, Event_ID),
+    FOREIGN KEY (Venue_ID, Event_ID) REFERENCES Occasion(ID, Venue_ID)
 );
 
 -- Artist_Genre (AName, Genre)
@@ -152,5 +147,4 @@ CREATE TABLE Customer_PhoneNumber (
 );
 
 -- Enables foreign keys again
-
 SET foreign_key_checks = 1;
