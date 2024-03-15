@@ -46,7 +46,7 @@ CREATE TABLE Artist (
 -- Event(VID, EID, EName, Description, Time, Type, Date)
 -- FK VID refers to Venue(ID) (NOT NULL)
 CREATE TABLE Occasion (
-    ID int unsigned NOT NULL AUTO_INCREMENT,
+    ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
     Venue_ID int unsigned NOT NULL,
     Event_Name varchar(50),
     Event_Description TEXT, -- text field can store up to 65,535 characters
