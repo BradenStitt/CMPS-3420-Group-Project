@@ -124,7 +124,7 @@ CREATE TABLE Event_Price (
     Venue_ID int unsigned NOT NULL,
     Event_ID int unsigned NOT NULL,
     Price DECIMAL(10, 2) DEFAULT 0.00,
-    PRIMARY KEY (Venue_ID, Event_ID),
+    PRIMARY KEY (Venue_ID, Event_ID, Price),
     FOREIGN KEY (Venue_ID, Event_ID) REFERENCES Occasion(ID, Venue_ID)
 );
 
