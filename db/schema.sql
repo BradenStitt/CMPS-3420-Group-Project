@@ -116,7 +116,7 @@ CREATE TABLE Event_Image (
     PRIMARY KEY (Venue_ID, Event_ID, E_Image),
     FOREIGN KEY (Venue_ID, Event_ID) REFERENCES Occasion(ID, Venue_ID)
 );
-
+z
 -- Event_Price(VID, EID, Price)
 -- FK VID refers to Occasion(ID) (NOT NULL)
 -- FK EID refers to Occasion(ID) (NOT NULL)
@@ -146,5 +146,43 @@ CREATE TABLE Customer_PhoneNumber (
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
 );
 
+CREATE TABLE Customer_History LIKE Customer;
+
 -- Enables foreign keys again
 SET foreign_key_checks = 1;
+
+-- Triggers
+
+-- Trigger to maintain history of deleted customers:
+DELIMITER //
+CREATE TRIGGER after_customer_delete
+AFTER DELETE ON Customer
+FOR EACH ROW
+BEGIN
+    INSERT INTO Customer_History VALUES (OLD.ID, OLD.Customer_Username, OLD.Customer_Password, OLD.Customer_Address, OLD.Customer_DOB, OLD.Created_At);
+END;//
+DELIMITER ;
+
+-- Trigger to update Event_Price when an Occasion's ID is updated:
+DELIMITER //
+CREATE TRIGGER after_occasion_update
+AFTER UPDATE ON Occasion
+FOR EACH ROW
+BEGIN
+    IF OLD.ID != NEW.ID THEN
+        UPDATE Event_Price SET Event_ID = NEW.ID WHERE Event_ID = OLD.ID AND Venue_ID = NEW.Venue_ID;
+    END IF;
+END;//
+DELIMITER ;
+
+-- Trigger to prevent deletion of artists that are followed by customers:
+DELIMITER //
+CREATE TRIGGER before_artist_delete
+BEFORE DELETE ON Artist
+FOR EACH ROW
+BEGIN
+    IF (SELECT COUNT(*) FROM Follows WHERE Artist_Name = OLD.AName) > 0 THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete artist that is followed by a customer';
+    END IF;
+END;//
+DELIMITER ;
