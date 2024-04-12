@@ -163,15 +163,6 @@ BEGIN
 END;//
 DELIMITER ;
 
--- Trigger to 
-ALTER TABLE Attends
-DROP FOREIGN KEY Attends_ibfk_2;
-
-ALTER TABLE Attends
-ADD CONSTRAINT Attends_ibfk_2
-FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
-ON DELETE CASCADE;
-
 -- Trigger to update Event_Price when an Occasion's ID is updated:
 DELIMITER //
 CREATE TRIGGER after_occasion_update
@@ -191,7 +182,7 @@ BEFORE DELETE ON Artist
 FOR EACH ROW
 BEGIN
     IF (SELECT COUNT(*) FROM Follows WHERE Artist_Name = OLD.AName) > 0 THEN
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete artist that is followed by a customer';
+        RAISE SQLSTATE '45000' SET MESSAGE_TEXT = 'Cannot delete artist that is followed by a customer';
     END IF;
 END;//
 DELIMITER ;
