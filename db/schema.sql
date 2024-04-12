@@ -163,6 +163,15 @@ BEGIN
 END;//
 DELIMITER ;
 
+-- Trigger to 
+ALTER TABLE Attends
+DROP FOREIGN KEY Attends_ibfk_2;
+
+ALTER TABLE Attends
+ADD CONSTRAINT Attends_ibfk_2
+FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
+ON DELETE CASCADE;
+
 -- Trigger to update Event_Price when an Occasion's ID is updated:
 DELIMITER //
 CREATE TRIGGER after_occasion_update
