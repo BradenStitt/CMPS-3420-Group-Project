@@ -171,18 +171,18 @@ FOR EACH ROW
 BEGIN
     -- Delete associated records from the Attends table
     DELETE FROM Attends
-    WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
+    WHERE Venue_ID = OLD.Venue_ID AND Event_ID = OLD.ID;
 
-    -- Delete associated records from the Performed table
-    DELETE FROM Performed
-    WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
+    -- -- Delete associated records from the Performed table
+    -- DELETE FROM Performed
+    -- WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
 
-    -- Delete associated records from the Event_Image table
-    DELETE FROM Event_Image
-    WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
+    -- -- Delete associated records from the Event_Image table
+    -- DELETE FROM Event_Image
+    -- WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
 
-    -- Delete associated records from the Event_Price table
-    DELETE FROM Event_Price
-    WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
+    -- -- Delete associated records from the Event_Price table
+    -- DELETE FROM Event_Price
+    -- WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
 END//
 DELIMITER ;
