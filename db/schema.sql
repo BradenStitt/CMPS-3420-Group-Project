@@ -63,11 +63,11 @@ CREATE TABLE Occasion (
 -- FK EID refers to Occasion(ID) (NOT NULL)
 -- FK CID refers to Customer(ID) (NOT NULL)
 CREATE TABLE Attends (
-    Venue_ID int unsigned NOT NULL,
     Event_ID int unsigned NOT NULL,
+    Venue_ID int unsigned NOT NULL,
     Customer_ID int unsigned NOT NULL,
-    PRIMARY KEY (Venue_ID, Event_ID, Customer_ID),
-    FOREIGN KEY (Venue_ID, Event_ID) REFERENCES Occasion(ID, Venue_ID),
+    PRIMARY KEY (Event_ID, venue_ID, Customer_ID),
+    FOREIGN KEY (Event_ID, Venue_ID) REFERENCES Occasion(ID, Venue_ID),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
 );
 
