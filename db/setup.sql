@@ -5,7 +5,6 @@ SET foreign_key_checks = 0;
 -- using ALTER TABLE statements. 
 
 source schema.sql;
-
 source data.sql;
 
 -- Turn foreign key constraints back on when finished
