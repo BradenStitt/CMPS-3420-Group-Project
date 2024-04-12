@@ -151,9 +151,9 @@ CREATE TABLE Customer_History LIKE Customer;
 -- Enables foreign keys again
 SET foreign_key_checks = 1;
 
--- Triggers
-
--- Trigger to maintain history of deleted customers:
+-- Trigger 1: after_customer_delete (Maintain History of Deleted Customers)
+-- Purpose: This trigger is designed to maintain a history of deleted customers by capturing their data before deletion into a history table (Customer_History). 
+-- This ensures that even after a customer is deleted, their information is preserved for auditing or archival purposes.
 DELIMITER //
 CREATE TRIGGER after_customer_delete
 AFTER DELETE ON Customer
@@ -163,7 +163,9 @@ BEGIN
 END;//
 DELIMITER ;
 
--- Trigger to cascade delete event-related data when an Occasion is deleted
+-- Trigger 2: before_occasion_delete (Cascade Delete Event-Related Data)
+-- Purpose: This trigger ensures that when an Occasion (event) is deleted, related data in the Attends table (attendance records) associated with that event are also deleted. 
+-- This maintains data consistency and prevents orphaned records.
 DELIMITER //
 CREATE TRIGGER before_occasion_delete
 BEFORE DELETE ON Occasion
@@ -176,7 +178,9 @@ BEGIN
 END//
 DELIMITER ;
 
--- Trigger to cascade delete event-related data when a Customer is deleted
+-- Trigger 3: before_customer_delete (Cascade Delete Customer-Related Data)
+-- Purpose: This trigger handles cascading deletions for a customer. 
+-- When a customer is deleted, it deletes associated records from the Customer_PhoneNumber table (phone numbers of the customer) and also removes attendance records (Attends) associated with the customer.
 DELIMITER //
 CREATE TRIGGER before_customer_delete
 BEFORE DELETE ON Customer
@@ -195,7 +199,9 @@ END//
 DELIMITER ;
 
 DELIMITER //
-
+-- Trigger 4: before_customer_change (Cascade Update on Customer ID Change)
+-- Purpose: This trigger handles cascading updates when a customer's ID is changed (either through deletion or update).
+-- It updates the corresponding Customer_ID in the Customer_PhoneNumber table to reflect the new ID and ensures that phone number records remain associated with the correct customer.
 CREATE TRIGGER before_customer_change
 BEFORE DELETE OR UPDATE ON Customer
 FOR EACH ROW
