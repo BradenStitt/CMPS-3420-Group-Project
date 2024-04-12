@@ -186,3 +186,27 @@ BEGIN
     -- WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
 END//
 DELIMITER ;
+
+-- Trigger to cascade delete event-related data when a Customer is deleted
+DELIMITER //
+CREATE TRIGGER before_customer_delete
+BEFORE DELETE ON Customer
+FOR EACH ROW
+BEGIN
+    -- Delete associated records from the Attends table
+    DELETE FROM Attends
+    WHERE Customer_ID = OLD.ID;
+
+    -- Delete associated records from the Performed table
+    -- DELETE FROM Performed
+    -- WHERE Customer_ID = OLD.ID;
+
+    -- Delete associated records from the Event_Image table
+    -- DELETE FROM Event_Image
+    -- WHERE Customer_ID = OLD.ID;
+
+    -- Delete associated records from the Event_Price table
+    -- DELETE FROM Event_Price
+    -- WHERE Customer_ID = OLD.ID;
+END//
+DELIMITER ;
