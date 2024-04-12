@@ -151,3 +151,71 @@ CREATE TABLE Customer_History LIKE Customer;
 -- Enables foreign keys again
 SET foreign_key_checks = 1;
 
+-- Triggers
+
+-- Trigger to maintain history of deleted customers:
+DELIMITER //
+CREATE TRIGGER after_customer_delete
+AFTER DELETE ON Customer
+FOR EACH ROW
+BEGIN
+    INSERT INTO Customer_History VALUES (OLD.ID, OLD.Customer_Username, OLD.Customer_Password, OLD.Customer_Address, OLD.Customer_DOB, OLD.Created_At);
+END;//
+DELIMITER ;
+
+
+-- Trigger 1: Ensure Capacity Limit on Venue
+-- This trigger will prevent inserting or updating an event (Occasion) if the venue's (Venue) capacity is exceeded.
+DELIMITER //
+CREATE TRIGGER CheckCapacityBeforeInsertUpdate
+BEFORE INSERT OR UPDATE ON Occasion
+FOR EACH ROW
+BEGIN
+    DECLARE venue_capacity INT;
+
+    -- Get the venue's capacity
+    SELECT Capacity INTO venue_capacity
+    FROM Venue
+    WHERE ID = NEW.Venue_ID;
+
+    -- Check if the venue's capacity will be exceeded
+    IF venue_capacity IS NOT NULL AND venue_capacity < (
+        SELECT COUNT(*)
+        FROM Attends
+        WHERE Venue_ID = NEW.Venue_ID AND Event_ID <> NEW.ID
+    ) + 1 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Venue capacity limit will be exceeded for this event.';
+    END IF;
+END//
+
+DELIMITER ;
+
+-- Trigger 2: Cascading Delete for Attends
+-- This trigger will automatically delete attendance records (Attends) when an event (Occasion) is deleted.
+DELIMITER //
+
+CREATE TRIGGER DeleteAttendsOnEventDelete
+AFTER DELETE ON Occasion
+FOR EACH ROW
+BEGIN
+    DELETE FROM Attends
+    WHERE Venue_ID = OLD.Venue_ID AND Event_ID = OLD.ID;
+END//
+
+DELIMITER ;
+
+-- Trigger 3: Update Artist Genre on Artist Name Change
+-- This trigger will update the artist's name in the Artist_Genre table if the artist's name is changed (Artist table).
+DELIMITER //
+
+CREATE TRIGGER UpdateArtistGenreOnNameChange
+AFTER UPDATE ON Artist
+FOR EACH ROW
+BEGIN
+    UPDATE Artist_Genre
+    SET Artist_Name = NEW.AName
+    WHERE Artist_Name = OLD.AName;
+END//
+
+DELIMITER ;
