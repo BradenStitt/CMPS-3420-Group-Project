@@ -151,14 +151,6 @@ CREATE TABLE Customer_History LIKE Customer;
 -- Enables foreign keys again
 SET foreign_key_checks = 1;
 
-ALTER TABLE Artist_Genre
-DROP FOREIGN KEY Artist_Genre_ibfk_1;
-
-ALTER TABLE Artist_Genre
-ADD CONSTRAINT Artist_Genre_ibfk_1
-FOREIGN KEY (Artist_Name) REFERENCES Artist(AName)
-ON UPDATE CASCADE;
-
 -- Triggers
 
 -- Trigger to maintain history of deleted customers:
@@ -171,16 +163,26 @@ BEGIN
 END;//
 DELIMITER ;
 
--- Trigger 2: Cascading Delete for Attends
--- This trigger will automatically delete attendance records (Attends) when an event (Occasion) is deleted.
+-- Trigger to cascade delete event-related data when an Occasion is deleted
 DELIMITER //
-
-CREATE TRIGGER DeleteAttendsOnEventDelete
-AFTER DELETE ON Occasion
+CREATE TRIGGER before_occasion_delete
+BEFORE DELETE ON Occasion
 FOR EACH ROW
 BEGIN
+    -- Delete associated records from the Attends table
     DELETE FROM Attends
-    WHERE Venue_ID = OLD.Venue_ID AND Event_ID = OLD.ID;
-END//
+    WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
 
+    -- Delete associated records from the Performed table
+    DELETE FROM Performed
+    WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
+
+    -- Delete associated records from the Event_Image table
+    DELETE FROM Event_Image
+    WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
+
+    -- Delete associated records from the Event_Price table
+    DELETE FROM Event_Price
+    WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
+END//
 DELIMITER ;
