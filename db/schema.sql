@@ -16,6 +16,7 @@ DROP TABLE IF EXISTS Event_Image;
 DROP TABLE IF EXISTS Event_Price;
 DROP TABLE IF EXISTS Artist_Genre;
 DROP TABLE IF EXISTS Customer_PhoneNumber;
+DROP TABLE IF EXISTS Customer_History;
 
 -- Create new sets of tables
 
