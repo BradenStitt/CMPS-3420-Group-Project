@@ -193,6 +193,11 @@ CREATE TRIGGER before_customer_delete
 BEFORE DELETE ON Customer
 FOR EACH ROW
 BEGIN
+
+    -- Delete associated records from the Customer_PhoneNumber table
+    DELETE FROM Customer_PhoneNumber
+    WHERE Customer_ID = OLD.ID;
+    
     -- Delete associated records from the Attends table
     DELETE FROM Attends
     WHERE Customer_ID = OLD.ID;
