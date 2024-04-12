@@ -173,17 +173,6 @@ BEGIN
     DELETE FROM Attends
     WHERE Venue_ID = OLD.Venue_ID AND Event_ID = OLD.ID;
 
-    -- -- Delete associated records from the Performed table
-    -- DELETE FROM Performed
-    -- WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
-
-    -- -- Delete associated records from the Event_Image table
-    -- DELETE FROM Event_Image
-    -- WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
-
-    -- -- Delete associated records from the Event_Price table
-    -- DELETE FROM Event_Price
-    -- WHERE Venue_ID = OLD.ID AND Event_ID = OLD.ID;
 END//
 DELIMITER ;
 
@@ -197,21 +186,31 @@ BEGIN
     -- Delete associated records from the Customer_PhoneNumber table
     DELETE FROM Customer_PhoneNumber
     WHERE Customer_ID = OLD.ID;
-    
+
     -- Delete associated records from the Attends table
     DELETE FROM Attends
     WHERE Customer_ID = OLD.ID;
 
-    -- Delete associated records from the Performed table
-    -- DELETE FROM Performed
-    -- WHERE Customer_ID = OLD.ID;
-
-    -- Delete associated records from the Event_Image table
-    -- DELETE FROM Event_Image
-    -- WHERE Customer_ID = OLD.ID;
-
-    -- Delete associated records from the Event_Price table
-    -- DELETE FROM Event_Price
-    -- WHERE Customer_ID = OLD.ID;
 END//
 DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER before_customer_change
+BEFORE DELETE OR UPDATE ON Customer
+FOR EACH ROW
+BEGIN
+    -- Cascade delete on Customer delete
+    DELETE FROM Customer_PhoneNumber
+    WHERE Customer_ID = OLD.ID
+    ON DELETE CASCADE;
+
+    -- Cascade update on Customer update
+    UPDATE Customer_PhoneNumber
+    SET Customer_ID = NEW.ID
+    WHERE Customer_ID = OLD.ID
+    ON UPDATE CASCADE;
+END//
+
+DELIMITER ;
+
