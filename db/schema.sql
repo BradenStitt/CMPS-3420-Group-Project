@@ -184,18 +184,3 @@ BEGIN
 END//
 
 DELIMITER ;
-
--- Trigger 3: Update Artist Genre on Artist Name Change
--- This trigger will update the artist's name in the Artist_Genre table if the artist's name is changed (Artist table).
-DELIMITER //
-
-CREATE TRIGGER UpdateArtistGenreOnNameChange
-AFTER UPDATE ON Artist
-FOR EACH ROW
-BEGIN
-    UPDATE Artist_Genre
-    SET Artist_Name = NEW.AName
-    WHERE Artist_Name = OLD.AName;
-END//
-
-DELIMITER ;
