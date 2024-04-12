@@ -151,6 +151,14 @@ CREATE TABLE Customer_History LIKE Customer;
 -- Enables foreign keys again
 SET foreign_key_checks = 1;
 
+ALTER TABLE Artist_Genre
+DROP FOREIGN KEY Artist_Genre_ibfk_1;
+
+ALTER TABLE Artist_Genre
+ADD CONSTRAINT Artist_Genre_ibfk_1
+FOREIGN KEY (Artist_Name) REFERENCES Artist(AName)
+ON UPDATE CASCADE;
+
 -- Triggers
 
 -- Trigger to maintain history of deleted customers:
@@ -161,34 +169,6 @@ FOR EACH ROW
 BEGIN
     INSERT INTO Customer_History VALUES (OLD.ID, OLD.Customer_Username, OLD.Customer_Password, OLD.Customer_Address, OLD.Customer_DOB, OLD.Created_At);
 END;//
-DELIMITER ;
-
-
--- Trigger 1: Ensure Capacity Limit on Venue
--- This trigger will prevent inserting or updating an event (Occasion) if the venue's (Venue) capacity is exceeded.
-DELIMITER //
-CREATE TRIGGER CheckCapacityBeforeInsertUpdate
-BEFORE INSERT OR UPDATE ON Occasion
-FOR EACH ROW
-BEGIN
-    DECLARE venue_capacity INT;
-
-    -- Get the venue's capacity
-    SELECT Capacity INTO venue_capacity
-    FROM Venue
-    WHERE ID = NEW.Venue_ID;
-
-    -- Check if the venue's capacity will be exceeded
-    IF venue_capacity IS NOT NULL AND venue_capacity < (
-        SELECT COUNT(*)
-        FROM Attends
-        WHERE Venue_ID = NEW.Venue_ID AND Event_ID <> NEW.ID
-    ) + 1 THEN
-        SIGNAL SQLSTATE '45000'
-        SET MESSAGE_TEXT = 'Venue capacity limit will be exceeded for this event.';
-    END IF;
-END//
-
 DELIMITER ;
 
 -- Trigger 2: Cascading Delete for Attends
