@@ -67,7 +67,8 @@ CREATE TABLE Attends (
     Event_ID int unsigned NOT NULL,
     Customer_ID int unsigned NOT NULL,
     PRIMARY KEY (Venue_ID, Event_ID, Customer_ID),
-    FOREIGN KEY (Venue_ID, Event_ID) REFERENCES Occasion(ID, Venue_ID),
+    FOREIGN KEY (Venue_ID) REFERENCES Occasion(Venue_ID),
+    FOREIGN KEY (Event_ID) REFERENCES Occasion(ID),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
 );
 
