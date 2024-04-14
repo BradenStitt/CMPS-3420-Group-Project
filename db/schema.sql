@@ -17,6 +17,13 @@ DROP TABLE IF EXISTS Event_Price;
 DROP TABLE IF EXISTS Artist_Genre;
 DROP TABLE IF EXISTS Customer_PhoneNumber;
 DROP TABLE IF EXISTS Customer_History;
+DROP VIEW IF EXISTS UpcomingEvents;
+DROP VIEW IF EXISTS PopularArtists;
+DROP VIEW IF EXISTS PopularEvents;
+DROP PROCEDURE IF EXISTS CreateUserAccount;
+DROP PROCEDURE IF EXISTS DeleteUserAccount;
+DROP PROCEDURE IF EXISTS UpdateUserPassword;
+DROP PROCEDURE IF EXISTS ArtistPerformance;
 
 -- Create new sets of tables
 
@@ -125,7 +132,147 @@ CREATE TABLE Customer_History LIKE Customer;
 SET foreign_key_checks = 1;
 
 
--- Triggers
+-- VIEWS
+
+-- View 1: 
+CREATE VIEW UpcomingEvents AS
+SELECT Venue_Name, Venue_Address, Event_Name, Event_Description, Price, Event_Date_and_Time
+FROM Venue V
+JOIN Occasion O ON V.ID = O.Venue_ID 
+JOIN Event_Price EP ON O.ID = EP.Event_ID
+WHERE O.Event_Date_and_Time > CURRENT_TIMESTAMP()
+ORDER BY O.Event_Date_and_Time;
+
+
+-- View 2:
+CREATE VIEW PopularArtists AS 
+SELECT Artist_Name as Artist, COUNT(Customer_ID) as Followers 
+FROM Follows GROUP BY Artist ORDER BY Followers DESC;
+
+
+-- View 3:
+CREATE VIEW PopularEvents AS 
+SELECT Event_Name, COUNT(Customer_ID) AS Attendees
+FROM Attends A 
+JOIN Occasion O ON A.Event_ID = O.ID
+GROUP BY Event_Name ORDER BY Attendees DESC;
+
+
+-- STORED PROCEDURES 
+
+-- Procedure 1: 
+
+DELIMITER //
+CREATE PROCEDURE CreateUserAccount(username varchar(50), password varchar(225), address varchar(225), dob date)
+BEGIN
+    -- Check if username already exists
+    SELECT COUNT(Customer_Username) INTO @count
+    FROM Customer
+    WHERE Customer_Username = username;
+
+    -- If username already exists, return a message
+    if @count > 0 THEN
+        SELECT 'Username already exists' AS Message;
+    else 
+        -- Insert new customer account
+        INSERT INTO Customer (Customer_Username, Customer_Password, Customer_Address, Customer_DOB)
+        VALUES (username, password, address, dob);
+
+        SELECT 'Account created successfully' AS Message;
+    end if;
+END //
+DELIMITER ;
+
+
+-- Procedure 2:
+
+DELIMITER //
+CREATE PROCEDURE DeleteUserAccount(username varchar(50), account_password varchar(225))
+BEGIN
+    SET @customerID = -1;
+
+    -- Find customer ID based on username and password
+    SELECT ID INTO @customerID
+    FROM Customer
+    WHERE Customer_Username = username AND Customer_Password = account_password;
+
+    -- Check if no ID was found and return a message
+    if @customerID < 0 THEN
+        SELECT 'Invalid username or password' AS Message;
+    else 
+        DELETE FROM Customer
+        WHERE Customer.ID = @customerID;
+
+        SELECT 'Account deleted successfully' AS Message;
+    end if;
+END //
+DELIMITER ;
+
+
+-- Procedure 3:
+
+DELIMITER //
+CREATE PROCEDURE UpdateUserPassword(username varchar(50), old_password varchar(225), new_password varchar(225))
+BEGIN
+    SET @customerID = -1;
+
+    if old_password = new_password THEN
+        SELECT 'New password cannot be the same as old password' AS Message;
+    else 
+        -- Find customer ID based on username and old password
+        SELECT ID INTO @customerID
+        FROM Customer 
+        WHERE Customer_Username = username AND Customer_Password = old_password;
+
+        -- Check if no ID was found and return a message 
+        if @customerID < 0 THEN
+            SELECT 'Invalid username or password' AS Message;
+        else 
+            -- Update the customer's password
+            UPDATE Customer
+            SET Customer_Password = new_password
+            WHERE Customer.ID = @customerID;
+
+            SELECT 'Password updated successfully' AS Message;
+        end if;
+    end if;
+END //
+DELIMITER ;
+
+
+-- Procedure 4:
+
+DELIMITER // 
+CREATE PROCEDURE ArtistPerformance(artist_name varchar(50))
+BEGIN
+    DECLARE artistExists INT DEFAULT 0;
+    DECLARE artistPerforming INT DEFAULT 0;
+
+    SELECT COUNT(*) INTO artistExists FROM Artist WHERE AName = artist_name;
+
+    -- Check if artist name is not found and return a message
+    if artistExists = 0 THEN 
+        SELECT 'Artist not found' AS Message;
+    else
+        SELECT COUNT(*) INTO artistPerforming FROM Performed WHERE Artist_Name = artist_name; 
+
+        -- Check if artist is not performing at any events and return a message
+        if artistPerforming = 0 THEN 
+            SELECT 'Artist is not performing at any events' AS Message;
+        else
+            -- Get the venue name, address, event name, and date and time where the artist is performing
+            SELECT Venue_Name, Venue_Address, Event_Name, Event_Date_and_Time
+            FROM Venue V 
+            JOIN Occasion O ON V.ID = O.Venue_ID 
+            JOIN Performed P ON O.ID = P.Event_ID
+            WHERE P.Artist_Name = artist_name;
+        end if;
+    end if;
+END //
+DELIMITER ;
+
+
+-- TRIGGERS
 
 -- Trigger 1: after_customer_delete (Maintain History of Deleted Customers)
 -- Purpose: This trigger is designed to maintain a history of deleted customers by capturing their data before deletion into a history table (Customer_History). 
@@ -137,7 +284,6 @@ AFTER DELETE ON Customer
 FOR EACH ROW
 BEGIN
     INSERT INTO Customer_History VALUES (OLD.ID, OLD.Customer_Username, OLD.Customer_Password, OLD.Customer_Address, OLD.Customer_DOB, OLD.Created_At);
-
 END//
 DELIMITER ;
 
@@ -154,7 +300,6 @@ BEGIN
     -- Delete associated records from the Attends table
     DELETE FROM Attends
     WHERE Venue_ID = OLD.Venue_ID AND Event_ID = OLD.ID;
-
 END//
 DELIMITER ;
 
@@ -168,7 +313,6 @@ CREATE TRIGGER before_customer_delete
 BEFORE DELETE ON Customer
 FOR EACH ROW
 BEGIN
-
     -- Delete associated records from the Customer_PhoneNumber table
     DELETE FROM Customer_PhoneNumber
     WHERE Customer_ID = OLD.ID;
@@ -176,7 +320,6 @@ BEGIN
     -- Delete associated records from the Attends table
     DELETE FROM Attends
     WHERE Customer_ID = OLD.ID;
-
 END//
 DELIMITER ;
 
@@ -200,6 +343,5 @@ BEGIN
     SET Customer_ID = NEW.ID
     WHERE Customer_ID = OLD.ID
     ON UPDATE CASCADE;
-    
 END//
 DELIMITER ;
