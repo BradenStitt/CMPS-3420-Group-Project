@@ -163,7 +163,7 @@ GROUP BY Event_Name ORDER BY Attendees DESC;
 -- Procedure 1: 
 
 DELIMITER //
-CREATE PROCEDURE CreateUserAccount(username varchar(50), password varchar(225), address varchar(225), dob date)
+CREATE PROCEDURE CreateUserAccount(username varchar(50), password varchar(225), cpassword varchar(225), address varchar(225), dob date)
 BEGIN
     -- Check if username already exists
     SELECT COUNT(Customer_Username) INTO @count
@@ -173,7 +173,9 @@ BEGIN
     -- If username already exists, return a message
     if @count > 0 THEN
         SELECT 'Username already exists' AS Message;
-    else 
+    elseif password != cpassword THEN
+        SELECT 'Passwords do not match' AS Message;
+    else  
         -- Insert new customer account
         INSERT INTO Customer (Customer_Username, Customer_Password, Customer_Address, Customer_DOB)
         VALUES (username, password, address, dob);
