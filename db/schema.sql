@@ -38,6 +38,7 @@ CREATE TABLE Customer (
     ID int unsigned NOT NULL AUTO_INCREMENT PRIMARY KEY,
     Customer_Username varchar(50) NOT NULL,
     Customer_Password varchar(255) NOT NULL,
+    Customer_PasswordHash varchar(128),
     Customer_Address varchar(255),
     Customer_DOB date,
     Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- e.g. 2021-04-20 12:00:00
