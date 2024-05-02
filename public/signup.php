@@ -13,16 +13,18 @@
             $dob = htmlspecialchars($_POST["dob"]);
             $password = htmlspecialchars($_POST["pass"]);
             $cpassword = htmlspecialchars($_POST["cpass"]);
+            $pwhash = password_hash($_POST["pass"], PASSWORD_DEFAULT);
 
             $db = get_pdo_connection();
 
-            $query = $db->prepare("CALL CreateUserAccount(?, ?, ?, ?, ?)");
+            $query = $db->prepare("CALL CreateUserAccount(?, ?, ?, ?, ?, ?)");
 
             $query->bindParam(1, $username, PDO::PARAM_STR);
             $query->bindParam(2, $password, PDO::PARAM_STR);
             $query->bindParam(3, $cpassword, PDO::PARAM_STR);
-            $query->bindParam(4, $address, PDO::PARAM_STR);
-            $query->bindParam(5, $dob, PDO::PARAM_STR);
+            $query->bindParam(4, $pwhash, PDO::PARAM_STR);
+            $query->bindParam(5, $address, PDO::PARAM_STR);
+            $query->bindParam(6, $dob, PDO::PARAM_STR);
 
             if (!$query->execute()) {
                 print_r($query->errorInfo());
@@ -71,8 +73,10 @@
 
             <div class="main" id="main-signup">
                 <div id="sidebar">
-                    <h3 class="sidebar-header" id="signuppage-sidebar-header">Welcome!</h3>
-                    <p class="sidebar-text" id="signuppage-sidebar-text">Let's get started on creating your account.</p>
+                    <div class="sidebar-message">
+                        <h3 class="sidebar-header" id="signuppage-sidebar-header">Welcome!</h3>
+                        <p class="sidebar-text" id="signuppage-sidebar-text">Let's get started on creating your account.</p>
+                    </div>
                 </div>
                 
                 <div id="sign-up">
