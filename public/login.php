@@ -11,30 +11,50 @@
 
             $db = get_pdo_connection();
 
-            $query = $db->prepare("SELECT Customer_Username, Customer_Address, Customer_DOB FROM Customer WHERE Customer_Username = ? AND Customer_Password = ?");
+            $verify = $db->prepare("SELECT Customer_PasswordHash FROM Customer WHERE Customer_Username = ?");
 
-            $query->bindParam(1, $_POST["uname"], PDO::PARAM_STR);
-            $query->bindParam(2, $_POST["pass"], PDO::PARAM_STR);
-
-            if (!$query->execute()) {
-                print_r($query->errorInfo());
+            $verify->bindParam(1, $username, PDO::PARAM_STR);
+        
+            if (!$verify->execute()) {
+                print_r($verify->errorInfo());
             }
+        
+            $verifyResults = $verify->fetchAll(PDO::FETCH_ASSOC);
+            
+            // if true, user exists 
+            if (count($verifyResults) == 1) {
 
-            $rows = $query->fetchAll(PDO::FETCH_ASSOC);
+                // checks if correct password was inputted 
+                if (password_verify($password, $verifyResults[0]["Customer_PasswordHash"])) {
 
-            if (count($rows) == 1) {
-                session_start();
-                $_SESSION["logged_in"] = true;
+                    $query = $db->prepare("SELECT Customer_Username, Customer_Address, Customer_DOB FROM Customer WHERE Customer_Username = ?");
 
-                $_SESSION["user"] = $rows[0]["Customer_Username"];
-                $_SESSION["password"] = $password;
-                $_SESSION["address"] = $rows[0]["Customer_Address"];
-                $_SESSION["dob"] = $rows[0]["Customer_DOB"];
+                    $query->bindParam(1, $_POST["uname"], PDO::PARAM_STR);
 
-                header("Location: index.php");
+                    if (!$query->execute()) {
+                        print_r($query->errorInfo());
+                    }
+
+                    $rows = $query->fetchAll(PDO::FETCH_ASSOC);
+
+                    if (count($rows) == 1) {
+                        session_start();
+                        $_SESSION["logged_in"] = true;
+
+                        $_SESSION["user"] = $rows[0]["Customer_Username"];
+                        $_SESSION["password"] = $password;
+                        $_SESSION["address"] = $rows[0]["Customer_Address"];
+                        $_SESSION["dob"] = $rows[0]["Customer_DOB"];
+
+                        header("Location: index.php");
+                    }
+                }
+                else {
+                    $showError = "Incorrect password";
+                }
             }
             else {
-                $showError = "Incorrect username or password";
+                $showError = "Username does not exist";
             }
         }
         else {
@@ -84,9 +104,11 @@
                 </div>
 
                 <div id="sidebar">
-                    <h3 class="sidebar-header">Welcome to login</h3>
-                    <p class="sidebar-text" id="loginpage-sidebar-text">Don't have an account?</p>
-                    <a href="signup.php"><button id="sign-up-btn">Sign Up</button></a>
+                    <div class="sidebar-message">
+                        <h3 class="sidebar-header">Welcome to login</h3>
+                        <p class="sidebar-text" id="loginpage-sidebar-text">Don't have an account?</p>
+                        <a href="signup.php"><button id="sign-up-btn">Sign Up</button></a>
+                    </div>
                 </div>
             </div>
 
