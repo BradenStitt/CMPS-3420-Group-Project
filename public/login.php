@@ -12,7 +12,6 @@
             $db = get_pdo_connection();
 
             $verify = $db->prepare("SELECT Customer_PasswordHash FROM Customer WHERE Customer_Username = ?");
-
             $verify->bindParam(1, $username, PDO::PARAM_STR);
         
             if (!$verify->execute()) {
@@ -21,13 +20,13 @@
         
             $verifyResults = $verify->fetchAll(PDO::FETCH_ASSOC);
             
-            // if true, user exists 
+            // if true, customer exists 
             if (count($verifyResults) == 1) {
 
                 // checks if correct password was inputted 
                 if (password_verify($password, $verifyResults[0]["Customer_PasswordHash"])) {
 
-                    $query = $db->prepare("SELECT Customer_Username, Customer_Address, Customer_DOB FROM Customer WHERE Customer_Username = ?");
+                    $query = $db->prepare("SELECT * FROM Customer JOIN Customer_PhoneNumber ON ID = Customer_ID WHERE Customer_Username = ?");
 
                     $query->bindParam(1, $_POST["uname"], PDO::PARAM_STR);
 
@@ -38,11 +37,12 @@
                     $rows = $query->fetchAll(PDO::FETCH_ASSOC);
 
                     if (count($rows) == 1) {
-                        session_start();
+
                         $_SESSION["logged_in"] = true;
 
                         $_SESSION["user"] = $rows[0]["Customer_Username"];
                         $_SESSION["password"] = $password;
+                        $_SESSION["pnumber"] = $rows[0]["Phone_Number"];
                         $_SESSION["address"] = $rows[0]["Customer_Address"];
                         $_SESSION["dob"] = $rows[0]["Customer_DOB"];
 

@@ -5,26 +5,28 @@
     $showError = false;
     $successMessage = "Account created successfully";
 
-    if(isset($_POST["signup"])) {
-        if ($_POST["uname"] !== "" && $_POST["address"] !== "" && $_POST["dob"] !== "" && $_POST["pass"] !== "" && $_POST["cpass"] !== "") {
+    if (isset($_POST["signup"])) {
+        if ($_POST["uname"] !== "" && $_POST["pnum"] !== "" && $_POST["pass"] !== "" && $_POST["cpass"] !== "") {
 
             $username = htmlspecialchars($_POST["uname"]);
-            $address = htmlspecialchars($_POST["address"]);
-            $dob = htmlspecialchars($_POST["dob"]);
+            $pnumber = htmlspecialchars($_POST["pnum"]);
+            // $address = htmlspecialchars($_POST["address"]);
+            // $dob = htmlspecialchars($_POST["dob"]);
             $password = htmlspecialchars($_POST["pass"]);
             $cpassword = htmlspecialchars($_POST["cpass"]);
             $pwhash = password_hash($_POST["pass"], PASSWORD_DEFAULT);
 
             $db = get_pdo_connection();
 
-            $query = $db->prepare("CALL CreateUserAccount(?, ?, ?, ?, ?, ?)");
+            $query = $db->prepare("CALL CreateUserAccount(?, ?, ?, ?, ?)");
 
             $query->bindParam(1, $username, PDO::PARAM_STR);
             $query->bindParam(2, $password, PDO::PARAM_STR);
             $query->bindParam(3, $cpassword, PDO::PARAM_STR);
             $query->bindParam(4, $pwhash, PDO::PARAM_STR);
-            $query->bindParam(5, $address, PDO::PARAM_STR);
-            $query->bindParam(6, $dob, PDO::PARAM_STR);
+            $query->bindParam(5, $pnumber, PDO::PARAM_STR);
+            // $query->bindParam(5, $address, PDO::PARAM_STR);
+            // $query->bindParam(6, $dob, PDO::PARAM_STR);
 
             if (!$query->execute()) {
                 print_r($query->errorInfo());
@@ -37,13 +39,14 @@
                     $showError = $result["Message"];
                 }
                 else {
-                    session_start();
+
                     $_SESSION["logged_in"] = true;
 
                     $_SESSION["user"] = $username;
                     $_SESSION["password"] = $password;
-                    $_SESSION["address"] = $address;
-                    $_SESSION["dob"] = $dob;
+                    $_SESSION["pnumber"] = $pnumber;
+                    $_SESSION["address"] = NULL;
+                    $_SESSION["dob"] = NULL;
 
                     header("Location: index.php");
                     unset($_POST["signup"]);
@@ -89,6 +92,11 @@
                         </div>
 
                         <div class="field">
+                            <strong><p class="input-label">PHONE NUMBER</p></strong>
+                            <input type="text" id="pnum" pattern="\d{3}-\d{3}-\d{4}" name="pnum" placeholder="XXX-XXX-XXXX" required><br>
+                        </div>
+
+                        <!-- <div class="field">
                             <strong><p class="input-label">ADDRESS</p></strong>
                             <input type="text" id="address" name="address" placeholder="Address" required><br>
                         </div>
@@ -96,7 +104,7 @@
                         <div class="field">
                             <strong><p class="input-label">DATE OF BIRTH</p></strong>
                             <input type="text" id="dob" pattern="\d{4}-\d{2}-\d{2}" name="dob" placeholder="YYYY-MM-DD" required><br>
-                        </div>
+                        </div> -->
 
                         <div class="field">
                             <strong><p class="input-label">PASSWORD</p></strong>
