@@ -215,13 +215,18 @@ input::placeholder {
     background-color: white;
 }
 
-.error {
+.error,
+.success {
     margin: 25px auto;
     margin-bottom: 0;
     width: 14vw;
     font-size: 0.8vw;
     color: red;
     text-align: center;
+}
+
+.success {
+    color: rgb(32, 188, 32);
 }
 
 .glass {
