@@ -22,7 +22,7 @@ DROP VIEW IF EXISTS PopularArtists;
 DROP VIEW IF EXISTS PopularEvents;
 DROP PROCEDURE IF EXISTS CreateUserAccount;
 DROP PROCEDURE IF EXISTS DeleteUserAccount;
-DROP PROCEDURE IF EXISTS UpdateUserPassword;
+DROP PROCEDURE IF EXISTS UpdateUserInfo;
 DROP PROCEDURE IF EXISTS ArtistPerformance;
 
 -- Create new sets of tables
@@ -39,8 +39,8 @@ CREATE TABLE Customer (
     Customer_Username varchar(50) NOT NULL,
     Customer_Password varchar(255) NOT NULL,
     Customer_PasswordHash varchar(128),
-    Customer_Address varchar(255),
-    Customer_DOB date,
+    Customer_Address varchar(255) DEFAULT NULL,
+    Customer_DOB date DEFAULT NULL,
     Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- e.g. 2021-04-20 12:00:00
 );
 
@@ -121,7 +121,7 @@ CREATE TABLE Artist_Genre (
 );
 
 CREATE TABLE Customer_PhoneNumber (
-    Customer_ID int unsigned NOT NULL,
+    Customer_ID int unsigned AUTO_INCREMENT NOT NULL,
     Phone_Number varchar(25),
     PRIMARY KEY (Customer_ID, Phone_Number),
     FOREIGN KEY (Customer_ID) REFERENCES Customer(ID)
@@ -164,7 +164,7 @@ GROUP BY Event_Name ORDER BY Attendees DESC;
 -- Procedure 1: 
 
 DELIMITER //
-CREATE PROCEDURE CreateUserAccount(username varchar(50), password varchar(225), cpassword varchar(225), pwhash varchar (128), address varchar(225), dob date)
+CREATE PROCEDURE CreateUserAccount(username varchar(50), password varchar(225), cpassword varchar(225), pwhash varchar (128), pnum varchar(25))
 BEGIN
     -- Check if username already exists
     SELECT COUNT(Customer_Username) INTO @count
@@ -178,8 +178,11 @@ BEGIN
         SELECT 'Passwords do not match' AS Message;
     else  
         -- Insert new customer account
-        INSERT INTO Customer (Customer_Username, Customer_Password, Customer_PasswordHash, Customer_Address, Customer_DOB)
-        VALUES (username, password, pwhash, address, dob);
+        INSERT INTO Customer (Customer_Username, Customer_Password, Customer_PasswordHash)
+        VALUES (username, password, pwhash);
+
+        INSERT INTO Customer_PhoneNumber (Phone_Number) 
+        VALUES (pnum);
 
         SELECT 'Account created successfully' AS Message;
     end if;
@@ -215,29 +218,32 @@ DELIMITER ;
 -- Procedure 3:
 
 DELIMITER //
-CREATE PROCEDURE UpdateUserPassword(username varchar(50), old_password varchar(225), new_password varchar(225))
+CREATE PROCEDURE UpdateUserInfo(username varchar(50), pnum varchar(25), address varchar(255), newpass varchar(225), pwhash varchar (128))
 BEGIN
     SET @customerID = -1;
 
-    if old_password = new_password THEN
-        SELECT 'New password cannot be the same as old password' AS Message;
+    -- Find customer ID based on username
+    SELECT ID INTO @customerID
+    FROM Customer 
+    WHERE Customer_Username = username;
+
+    -- Check if no ID was found and return a message 
+    if @customerID < 0 THEN
+        SELECT 'Username does not exist' AS Message;
     else 
-        -- Find customer ID based on username and old password
-        SELECT ID INTO @customerID
-        FROM Customer 
-        WHERE Customer_Username = username AND Customer_Password = old_password;
+        -- Update the customer's provided information
+        UPDATE Customer
+        SET Customer_Password = newpass,
+            Customer_PasswordHash = pwhash,
+            Customer_Address = address
+            -- Customer_DOB = dob
+        WHERE Customer.ID = @customerID;
 
-        -- Check if no ID was found and return a message 
-        if @customerID < 0 THEN
-            SELECT 'Invalid username or password' AS Message;
-        else 
-            -- Update the customer's password
-            UPDATE Customer
-            SET Customer_Password = new_password
-            WHERE Customer.ID = @customerID;
+        UPDATE Customer_PhoneNumber
+        SET Phone_Number = pnum
+        WHERE Customer_ID = @customerID;
 
-            SELECT 'Password updated successfully' AS Message;
-        end if;
+        SELECT 'Provided information updated successfully' AS Message;
     end if;
 END //
 DELIMITER ;
