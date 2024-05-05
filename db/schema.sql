@@ -40,7 +40,6 @@ CREATE TABLE Customer (
     Customer_Password varchar(255) NOT NULL,
     Customer_PasswordHash varchar(128),
     Customer_Address varchar(255) DEFAULT NULL,
-    Customer_DOB date DEFAULT NULL,
     Created_At TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- e.g. 2021-04-20 12:00:00
 );
 
@@ -193,14 +192,14 @@ DELIMITER ;
 -- Procedure 2:
 
 DELIMITER //
-CREATE PROCEDURE DeleteUserAccount(username varchar(50), account_password varchar(225))
+CREATE PROCEDURE DeleteUserAccount(username varchar(50))
 BEGIN
     SET @customerID = -1;
 
     -- Find customer ID based on username and password
     SELECT ID INTO @customerID
     FROM Customer
-    WHERE Customer_Username = username AND Customer_Password = account_password;
+    WHERE Customer_Username = username;
 
     -- Check if no ID was found and return a message
     if @customerID < 0 THEN
@@ -292,7 +291,7 @@ CREATE TRIGGER after_customer_delete
 AFTER DELETE ON Customer
 FOR EACH ROW
 BEGIN
-    INSERT INTO Customer_History VALUES (OLD.ID, OLD.Customer_Username, OLD.Customer_Password, OLD.Customer_Address, OLD.Customer_DOB, OLD.Created_At);
+    INSERT INTO Customer_History VALUES (OLD.ID, OLD.Customer_Username, OLD.Customer_Password, OLD.Customer_Address, OLD.Created_At);
 END//
 DELIMITER ;
 

@@ -25,32 +25,32 @@ INSERT INTO Venue (Venue_Name, Venue_Address, Capacity) VALUES
 ('Stade de France', '93200 Saint-Denis, France', 81338);
 
 -- Setup data for Customer Table
-INSERT INTO Customer (Customer_Username, Customer_Password, Customer_Address, Customer_DOB, Created_At) VALUES
-('efoston0', 'tB0`@Ux<RgpSz<x', '83351 Ruskin Court', '1992-02-05', '2023-07-20 14:12:55'),
-('lwoodland1', 'yE1@>o4''_py7tu<', '8 Tennessee Terrace', '1996-12-17', '2024-01-08 17:47:15'),
-('mvanderbeek2', 'dS9''l8|NI~FjuCe', '9036 Tennyson Road', '1997-09-22', '2024-03-30 04:05:38'),
-('rbordis3', 'xZ8$~AB>4o', '218 Westerfield Way', '1988-03-24', '2023-10-23 13:58:30'),
-('pofarrell4', 'qR0=l?J<PP', '653 Nobel Circle', '2001-04-07', '2024-03-11 22:18:54'),
-('zeverly5', 'kB5$M4HKm11v', '06024 Forest Terrace', '1997-11-10', '2023-07-29 06:08:25'),
-('cjago6', 'vP9<F=YPuqoU', '335 Golf Point', '2001-04-12', '2023-06-03 03:30:08'),
-('cmoncur7', 'eS0&*Gu4KQP&1\%d', '9 Ronald Regan Road', '1995-06-13', '2023-07-10 17:27:34'),
-('lscotter8', 'dE0<GIQht', '808 Hagan Alley', '1993-10-02', '2024-01-03 00:48:14'),
-('eshelp9', 'tC7!U.sjG%V$', '5 Gerald Court', '1994-10-06', '2023-06-01 14:16:26'),
-('ireutera', 'xG0\jDZdX1c>,m', '5309 Heffernan Way', '1999-11-22', '2023-05-21 04:52:11'),
-('awoollastonb', 'vI6%A38S)ow~98m', '7 Porter Terrace', '1991-11-05', '2023-11-01 16:46:07'),
-('pmctrustriec', 'uO6/qMK>sQz''o{b', '0975 Chive Hill', '1990-07-03', '2023-11-18 04:58:32'),
-('agrimwaded', 'oF8=R`?YJiD', '1 Summit Terrace', '1987-11-11', '2023-07-19 15:09:56'),
-('cbaldettie', 'cC5)bM9</k$LE', '26 Waubesa Circle', '1995-02-13', '2023-06-18 16:41:15'),
-('cmustoof', 'zT1*g_hO?fqn,,"', '13 Westridge Court', '1991-03-21', '2023-04-21 04:35:32'),
-('hfriftg', 'iY0\H&X|c_@n0', '92870 Golf View Terrace', '1996-03-14', '2024-03-25 01:13:54'),
-('etoulsonh', 'fY6_QXs{dX~WbE', '0360 Judy Center', '2001-12-23', '2023-12-08 21:55:57'),
-('nferebeei', 'xQ8{pp2>@', '950 Warrior Court', '1992-05-20', '2023-09-28 00:26:36'),
-('cdeasj', 'fS2=m8PC', '8059 Moland Court', '1989-09-15', '2023-10-22 09:20:50'),
-('pjarviek', 'kP6?"eJ"', '935 Waxwing Avenue', '1994-05-21', '2024-02-16 09:24:38'),
-('rpohlakl', 'zY2_3Kt&T)~q}T', '81301 Toban Street', '1996-04-22', '2023-06-29 16:59:40'),
-('rhuzzeym', 'gT3{,QYfbJdS', '9011 Utah Way', '1987-06-23', '2023-10-04 12:31:43'),
-('asimoninn', 'oF8=R`?YJiD', '8 Surrey Place', '2002-01-16', '2023-07-02 21:58:02'),
-('jborgeo', 'mN7%z}>>xa}', '0 Cambridge Place', '1987-06-21', '2023-07-12 17:38:16');
+INSERT INTO Customer (Customer_Username, Customer_Password, Customer_Address, Created_At) VALUES
+('efoston0', 'tB0`@Ux<RgpSz<x', '83351 Ruskin Court', '2023-07-20 14:12:55'),
+('lwoodland1', 'yE1@>o4''_py7tu<', '8 Tennessee Terrace', '2024-01-08 17:47:15'),
+('mvanderbeek2', 'dS9''l8|NI~FjuCe', '9036 Tennyson Road', '2024-03-30 04:05:38'),
+('rbordis3', 'xZ8$~AB>4o', '218 Westerfield Way', '2023-10-23 13:58:30'),
+('pofarrell4', 'qR0=l?J<PP', '653 Nobel Circle', '2024-03-11 22:18:54'),
+('zeverly5', 'kB5$M4HKm11v', '06024 Forest Terrace', '2023-07-29 06:08:25'),
+('cjago6', 'vP9<F=YPuqoU', '335 Golf Point', '2023-06-03 03:30:08'),
+('cmoncur7', 'eS0&*Gu4KQP&1\%d', '9 Ronald Regan Road', '2023-07-10 17:27:34'),
+('lscotter8', 'dE0<GIQht', '808 Hagan Alley', '2024-01-03 00:48:14'),
+('eshelp9', 'tC7!U.sjG%V$', '5 Gerald Court', '2023-06-01 14:16:26'),
+('ireutera', 'xG0\jDZdX1c>,m', '5309 Heffernan Way', '2023-05-21 04:52:11'),
+('awoollastonb', 'vI6%A38S)ow~98m', '7 Porter Terrace', '2023-11-01 16:46:07'),
+('pmctrustriec', 'uO6/qMK>sQz''o{b', '0975 Chive Hill', '2023-11-18 04:58:32'),
+('agrimwaded', 'oF8=R`?YJiD', '1 Summit Terrace', '2023-07-19 15:09:56'),
+('cbaldettie', 'cC5)bM9</k$LE', '26 Waubesa Circle', '2023-06-18 16:41:15'),
+('cmustoof', 'zT1*g_hO?fqn,,"', '13 Westridge Court', '2023-04-21 04:35:32'),
+('hfriftg', 'iY0\H&X|c_@n0', '92870 Golf View Terrace', '2024-03-25 01:13:54'),
+('etoulsonh', 'fY6_QXs{dX~WbE', '0360 Judy Center', '2023-12-08 21:55:57'),
+('nferebeei', 'xQ8{pp2>@', '950 Warrior Court', '2023-09-28 00:26:36'),
+('cdeasj', 'fS2=m8PC', '8059 Moland Court', '2023-10-22 09:20:50'),
+('pjarviek', 'kP6?"eJ"', '935 Waxwing Avenue', '2024-02-16 09:24:38'),
+('rpohlakl', 'zY2_3Kt&T)~q}T', '81301 Toban Street', '2023-06-29 16:59:40'),
+('rhuzzeym', 'gT3{,QYfbJdS', '9011 Utah Way', '2023-10-04 12:31:43'),
+('asimoninn', 'oF8=R`?YJiD', '8 Surrey Place', '2023-07-02 21:58:02'),
+('jborgeo', 'mN7%z}>>xa}', '0 Cambridge Place', '2023-07-12 17:38:16');
 
 -- Setup data for Artist Table
 INSERT INTO Artist (AName) VALUES
