@@ -16,17 +16,6 @@
         $newpass = htmlspecialchars($_POST["newpass"]);
         $cnewpass = htmlspecialchars($_POST["cnewpass"]);
         $pwhash = password_hash($_POST["newpass"], PASSWORD_DEFAULT);
-        // $dob = htmlspecialchars($_POST["dob"]);
-
-        // if ($dob != "") {
-        //     // convert mm/dd/yyyy to yyyy-mm-dd
-        //     $dob = date("Y-m-d", strtotime($dob));
-        //     $_SESSION["dob"] = $dob;
-        // }
-        // else {
-        //     $dob = NULL;
-        // }
-
 
         $db = get_pdo_connection();
 
@@ -56,7 +45,6 @@
             $query->bindParam(1, $username, PDO::PARAM_STR);
             $query->bindParam(2, $pnumber, PDO::PARAM_STR);
             $query->bindParam(3, $address, PDO::PARAM_STR);
-            // $query->bindParam(4, $dob, PDO::PARAM_STR);
             $query->bindParam(4, $newpass, PDO::PARAM_STR);
             $query->bindParam(5, $pwhash, PDO::PARAM_STR);
 
@@ -96,28 +84,28 @@
             <!-- <h1 class="projname" id="projname-signup">concertRadar</h1> -->
 
             <ul id="navlist">
-                <li><a href="index.php" style="font-size:1.5vw;">concertRadar</a></li>
-                <li style="float:right;">
-                    <a href="logout.php"><button id="sign-out-btn">Sign Out</button></a>
+                <li><a href="index.php" class="nav-content" style="font-size:1.5vw;">concertRadar</a></li>
+                <li class="dropdown" style="float:right;">
+                    <a href="javascript:void(0)" class="nav-content nav-right">Settings</a>
+
+                    <div class="dropdown-content">
+                        <a href="profile.php">Profile</a>
+                        <a href="logout.php">Sign Out</a>
+                        <a href="deleteAccount.php">Delete Account</a>
+                    </div>
                 </li>
-                <li style="float:right;"><a href=# style="padding-top:24px;">PopularEvents</a></li>
-                <li style="float:right;"><a href=# style="padding-top:24px;">PopularArtists</a></li>
+                <li style="float:right;"><a href=# class=" nav-content nav-right">PopularEvents</a></li>
+                <li style="float:right;"><a href=# class="nav-content nav-right">PopularArtists</a></li>
             </ul>
 
             <div class="main" id="profile">
-                <!-- <div id="sidebar">
-                    <div class="sidebar-message">
-                        <h3 class="sidebar-header" id="signuppage-sidebar-header">Welcome!</h3>
-                        <p class="sidebar-text" id="signuppage-sidebar-text">Let's get started on creating your account.</p>
-                    </div>
-                </div> -->
-                
+    
                 <!-- <h3 class="sign-header" id="username">Sign Up</h3> -->
 
                 <form action="profile.php" class="form" id="profile-form" method="POST" autocomplete="off">
                     <div>
                         <strong><p class="input-label">USERNAME</p></strong>
-                        <input type="text" id="username" value= "<?= $_SESSION["user"] ?>" readonly><br>
+                        <input type="text" id="username-profile" value= "<?= $_SESSION["user"] ?>" readonly><br>
                     </div>
 
                     <div class="field">
@@ -129,11 +117,6 @@
                         <strong><p class="input-label">ADDRESS</p></strong>
                         <input type="text" id="address" name="address" value= "<?= $_SESSION["address"] ?>"><br>
                     </div>
-
-                    <!-- <div class="field">
-                        <strong><p class="input-label">DATE OF BIRTH</p></strong>
-                        <input type="text" id="dob" pattern="\d{4}-\d{2}-\d{2}" name="dob" placeholder="YYYY-MM-DD"><br>
-                    </div> -->
 
                     <div class="field">
                         <strong><p class="input-label">NEW PASSWORD</p></strong>
@@ -159,7 +142,7 @@
 
                 </form>
 
-            </div>
+            </div> 
         </div>
     </body>
 </html>

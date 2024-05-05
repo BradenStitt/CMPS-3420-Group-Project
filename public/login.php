@@ -44,7 +44,6 @@
                         $_SESSION["password"] = $password;
                         $_SESSION["pnumber"] = $rows[0]["Phone_Number"];
                         $_SESSION["address"] = $rows[0]["Customer_Address"];
-                        $_SESSION["dob"] = $rows[0]["Customer_DOB"];
 
                         header("Location: index.php");
                     }
